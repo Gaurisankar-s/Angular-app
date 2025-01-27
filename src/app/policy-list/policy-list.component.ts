@@ -8,50 +8,146 @@ import { PolicyService } from '../services/policy.service';
   imports: [CommonModule],
   template: `
     <div class="policy-list-container">
-      <h2>All Policies in DB</h2>
-      <ul>
-        <li *ngFor="let policy of policies" (click)="showPolicyDetails(policy.policyId)">
-          {{ policy.policyName }}
-        </li>
-      </ul>
-      <div *ngIf="selectedPolicy" class="policy-details">
-        <h3>Policy Details</h3>
-        <p><strong>ID:</strong> {{ selectedPolicy.policyId }}</p>
-        <p><strong>Name:</strong> {{ selectedPolicy.policyName }}</p>
-        <p><strong>Category:</strong> {{ selectedPolicy.policyCategory }}</p>
-        <p><strong>Effective Date:</strong> {{ selectedPolicy.policyEffectiveDate }}</p>
-        <p><strong>Requires Review:</strong> {{ selectedPolicy.requiresReview }}</p>
-        <p><strong>Attestation E-Signature:</strong> {{ selectedPolicy.attestationRequiresESignature }}</p>
-        <p><strong>Frequency Type:</strong> {{ selectedPolicy.attestationFrequencyType }}</p>
+      <h1>All Policies</h1>
+      <div class="content-wrapper">
+        <div class="policies-list">
+          <ul>
+            <li *ngFor="let policy of policies" 
+                (click)="showPolicyDetails(policy.policyId)"
+                [class.active]="selectedPolicy?.policyId === policy.policyId">
+              {{ policy.policyName }}
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="selectedPolicy" class="policy-details">
+          <h3>Policy Details</h3>
+          <div class="details-grid">
+            <p><strong>ID:</strong> {{ selectedPolicy.policyId }}</p>
+            <p><strong>Name:</strong> {{ selectedPolicy.policyName }}</p>
+            <p><strong>Category:</strong> {{ selectedPolicy.policyCategory }}</p>
+            <p><strong>Effective Date:</strong> {{ selectedPolicy.policyEffectiveDate }}</p>
+            <p><strong>Requires Review:</strong> {{ selectedPolicy.requiresReview }}</p>
+            <p><strong>Attestation E-Signature:</strong> {{ selectedPolicy.attestationRequiresESignature }}</p>
+            <p><strong>Frequency Type:</strong> {{ selectedPolicy.attestationFrequencyType }}</p>
+          </div>
+        </div>
       </div>
     </div>
   `,
   styles: [`
     .policy-list-container {
-      padding: 1rem;
-      background-color: #f0f0f0;
-      border-radius: 8px;
-      margin-bottom: 1rem;
+      max-width: 1000px;
+      width: 95%;
+      margin: 2rem auto;
+      padding: 2.5rem;
+      background: linear-gradient(135deg, #ffffff 0%, #f7f7f7 100%);
+      border-radius: 20px;
+      box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.06),
+        0 0 100px rgba(0, 0, 0, 0.03);
+      position: relative;
+      overflow: hidden;
     }
-    h2 {
-      margin: 0 0 0.5rem 0;
+
+    .policy-list-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #2d3748, #4a5568, #718096);
     }
+
+    h1 {
+      color: #1e293b;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #4f46e5, #3b82f6);
+      border-radius: 2px;
+    }
+
+    .content-wrapper {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .policies-list {
+      flex: 1;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
     ul {
       list-style-type: none;
       padding: 0;
+      margin: 0;
     }
+
     li {
-      padding: 0.5rem 0;
-      cursor: pointer;
-    }
-    li:hover {
-      background-color: #e0e0e0;
-    }
-    .policy-details {
-      margin-top: 1rem;
       padding: 1rem;
-      background-color: #ffffff;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
       border-radius: 8px;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    li:hover {
+      background: #f1f5f9;
+      transform: translateX(5px);
+    }
+
+    li.active {
+      background: #e2e8f0;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .policy-details {
+      flex: 2;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .policy-details h3 {
+      color: #1e293b;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .details-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .details-grid p {
+      margin: 0;
+      padding: 0.5rem;
+      background: #f8fafc;
+      border-radius: 6px;
+    }
+
+    .details-grid strong {
+      color: #4a5568;
     }
   `]
 })
