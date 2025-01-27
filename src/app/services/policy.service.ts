@@ -17,6 +17,18 @@ export class PolicyService {
     );
   }
 
+  getAllPolicies(): Observable<any> {
+    return this.http.get(this.apiUrl).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getPolicyById(policyId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/policy/${policyId}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error('An error occurred:', error);
     if (error.error instanceof ErrorEvent) {
