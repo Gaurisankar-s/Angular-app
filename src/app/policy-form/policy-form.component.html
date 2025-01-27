@@ -1,117 +1,66 @@
 <div class="policy-form-container">
-  <h1>MS Word Integration</h1>
+  <h1>Create a Policy</h1>
   
   <form [formGroup]="policyForm" (ngSubmit)="onSubmit()">
     <div class="form-section">
-      <h2>Select a Workflow*</h2>
-      <div class="workflow-options">
-        <label>
-          <input type="radio" formControlName="workflow" value="create">
-          Create a Policy
-        </label>
-        <label>
-          <input type="radio" formControlName="workflow" value="edit">
-          Edit
-        </label>
-      </div>
+      <h3>User Information</h3>
+      <label>
+        User ID *
+        <input type="text" formControlName="userId" placeholder="Enter user ID">
+      </label>
     </div>
 
     <div class="form-section">
+      <h3>Policy Details</h3>
+      <label>
+        Policy ID *
+        <input type="text" formControlName="policyId" placeholder="Enter policy ID">
+      </label>
       <label>
         Policy Name *
-        <input type="text" formControlName="policyName" placeholder="Name this policy">
+        <input type="text" formControlName="policyName" placeholder="Enter policy name">
       </label>
-    </div>
-
-    <div class="form-section">
+      
       <label>
-        Policy Category *
-        <select formControlName="policyCategory">
-          <option value="">Select a category for this policy</option>
-          <option value="cat1">Category 1</option>
-          <option value="cat2">Category 2</option>
-        </select>
+        Policy Category
+        <input type="text" formControlName="policyCategory" placeholder="Enter policy category">
       </label>
-    </div>
-
-    <div class="form-section">
+      
       <label>
         Effective Date
-        <input type="date" formControlName="effectiveDate">
-      </label>
-    </div>
-
-    <div class="form-section">
-      <label>
-        Policy Owner(s)
-        <select formControlName="policyOwners">
-          <option value="">Select owners for this policy</option>
-          <option value="owner1">Owner 1</option>
-          <option value="owner2">Owner 2</option>
-        </select>
+        <input type="date" formControlName="policyEffectiveDate">
       </label>
     </div>
 
     <div class="form-section">
       <h3>Review</h3>
-      <div class="review-options">
-        <p>Does this policy need to be reviewed?</p>
-        <label>
-          <input type="radio" formControlName="needsReview" value="yes"> YES
-        </label>
-        <label>
-          <input type="radio" formControlName="needsReview" value="no"> NO
-        </label>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <h3>Approval *</h3>
-      <select formControlName="approvalWorkflow">
-        <option value="">CREATE A NEW APPROVAL WORKFLOW</option>
-        <option value="workflow1">Workflow 1</option>
-        <option value="workflow2">Workflow 2</option>
-      </select>
-    </div>
-
-    <div class="form-section">
-      <h3>Policy Portal Access</h3>
-      <select formControlName="portalAccess">
-        <option value="">Who should be able to view this policy?</option>
-        <option value="group1">Group 1</option>
-        <option value="group2">Group 2</option>
-      </select>
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="requiresReview">
+        Requires Review
+      </label>
     </div>
 
     <div class="form-section">
       <h3>Attestation</h3>
-      <select formControlName="attestation">
-        <option value="">Select the persons responsible for attesting this policy</option>
-        <option value="person1">Person 1</option>
-        <option value="person2">Person 2</option>
-      </select>
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="attestationRequiresESignature">
+        Requires E-Signature
+      </label>
       
-      <div class="checkbox-section">
-        <label>
-          <input type="checkbox" formControlName="requiresESignature">
-          THIS POLICY REQUIRES E-SIGNATURE FOR ATTESTATION
-        </label>
-      </div>
-
-      <div class="attestation-schedule">
-        <h4>When?</h4>
-        <select formControlName="attestationSchedule">
-          <option value="">Set A frequency</option>
+      <label>
+        Attestation Frequency
+        <select formControlName="attestationFrequencyType">
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
           <option value="monthly">Monthly</option>
-          <option value="quarterly">Quarterly</option>
           <option value="yearly">Yearly</option>
         </select>
-      </div>
+      </label>
     </div>
 
     <div class="button-container">
       <button type="submit" class="create-policy">Create Policy</button>
-      <button type="button" class="add-to-word" (click)="addToWord()">Add to MS Word</button>
+      <button type="button" class="add-to-word" (click)="addToWord()">Add to Word</button>
     </div>
   </form>
 </div>

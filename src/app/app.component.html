@@ -178,7 +178,27 @@
 </style>
 
 <main class="main">
-  <app-policy-form></app-policy-form>
+  <div class="forms-container">
+    <div class="form-section">
+      <button class="toggle-form policy-toggle" (click)="togglePolicyForm()">
+        <span>Create Policy</span>
+        <i class="arrow" [class.down]="!showPolicyForm" [class.up]="showPolicyForm"></i>
+      </button>
+      <div class="form-wrapper" [class.expanded]="showPolicyForm">
+        <app-policy-form></app-policy-form>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <button class="toggle-form user-toggle" (click)="toggleUserForm()">
+        <span>Create User</span>
+        <i class="arrow" [class.down]="!showUserForm" [class.up]="showUserForm"></i>
+      </button>
+      <div class="form-wrapper" [class.expanded]="showUserForm">
+        <app-user-form></app-user-form>
+      </div>
+    </div>
+  </div>
 </main>
 
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
