@@ -32,6 +32,17 @@ import { PolicyService } from '../services/policy.service';
           </div>
         </div>
       </div>
+      <div class="document-viewer">
+        <h3>Policy Document</h3>
+        <iframe
+          src="http://localhost:8000/proxy"
+          width="100%"
+          height="600"
+          frameborder="0"
+          scrolling="yes"
+          allowfullscreen>
+        </iframe>
+      </div>
     </div>
   `,
   styles: [`
@@ -148,6 +159,26 @@ import { PolicyService } from '../services/policy.service';
 
     .details-grid strong {
       color: #4a5568;
+    }
+
+    .document-viewer {
+      margin-top: 2rem;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .document-viewer h3 {
+      color: #1e293b;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    iframe {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
     }
   `]
 })
