@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
 import { PolicyService } from '../services/policy.service';
 
 @Component({
@@ -34,14 +35,19 @@ import { PolicyService } from '../services/policy.service';
       </div>
       <div class="document-viewer">
         <h3>Policy Document</h3>
-        <iframe
-          src="http://localhost:8000/proxy"
-          width="100%"
-          height="600"
-          frameborder="0"
-          scrolling="yes"
-          allowfullscreen>
-        </iframe>
+        <div *ngIf="selectedPolicy?.readLink; else noDocument">
+          <iframe
+            [src]="getProxiedUrl(selectedPolicy.readLink)"
+            width="100%"
+            height="600"
+            frameborder="0"
+            scrolling="yes"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <ng-template #noDocument>
+          <p>No document available for this policy.</p>
+        </ng-template>
       </div>
     </div>
   `,
@@ -186,7 +192,10 @@ export class PolicyListComponent implements OnInit {
   policies: any[] = [];
   selectedPolicy: any = null;
 
-  constructor(private policyService: PolicyService) {}
+  constructor(
+    private policyService: PolicyService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit() {
     this.loadPolicies();
@@ -196,6 +205,7 @@ export class PolicyListComponent implements OnInit {
     this.policyService.getAllPolicies().subscribe({
       next: (policies) => {
         this.policies = policies;
+        // console.log('Loaded policies:', policies);
       },
       error: (error) => {
         console.error('Error loading policies:', error);
@@ -207,10 +217,20 @@ export class PolicyListComponent implements OnInit {
     this.policyService.getPolicyById(policyId).subscribe({
       next: (policy) => {
         this.selectedPolicy = policy;
+        console.log('Selected policy:', policy);
+        if (policy.readLink) {
+          console.log('Document URL:', this.getProxiedUrl(policy.readLink));
+        }
       },
       error: (error) => {
         console.error('Error fetching policy details:', error);
       }
     });
+  }
+
+  getProxiedUrl(readLink: string) {
+    const proxyUrl = `http://localhost:8000/proxy?url=${encodeURIComponent(readLink)}`;
+    console.log('Generated proxy URL:', proxyUrl);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(proxyUrl);
   }
 }

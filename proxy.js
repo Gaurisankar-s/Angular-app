@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const path = require("path"); // Add this line
+const path = require("path");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const app = express();
@@ -16,43 +16,46 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-const PORT = process.env.PORT || 8000; // Define the port for your server
+const PORT = process.env.PORT || 8000;
 
-// Define the specific SharePoint URL to proxy
-
-
-
-
-// Set up the proxy middleware for the specific document
-const sharepointUrl =
-//  "https://vcomplytechnologies-my.sharepoint.com/:w:/g/personal/gaurisankar_v-comply_com/EUJRxi_tRYdKkhRCQWGGp0ABqPSXgnYeFjqO3kQ8BqDhTA?"
-"https://vcomplytechnologies-my.sharepoint.com/:w:/g/personal/gaurisankar_v-comply_com/EUJRxi_tRYdKkhRCQWGGp0ABPZkdOMeyUtZggCfHHLMBsg?"
-
+// Set up the proxy middleware for dynamic document URLs
 app.use(
   "/proxy",
-  createProxyMiddleware({
-    target: sharepointUrl,
-    changeOrigin: true,
-    onProxyReq: (proxyReq, req, res) => {
-      // Add headers necessary for iframe compatibility
-      proxyReq.setHeader("X-Frame-Options", "ALLOW-FROM *");
-      proxyReq.setHeader("Content-Security-Policy", "frame-ancestors 'self' *");
-    },
-    onProxyRes: (proxyRes, req, res) => {
-      // Add headers to allow iframe embedding
-      proxyRes.headers["X-Frame-Options"] = "ALLOW-FROM *";
-      proxyRes.headers["Content-Security-Policy"] = "frame-ancestors 'self' *";
+  (req, res, next) => {
+    // Get the SharePoint URL from the query parameter
+    const targetUrl = req.query.url;
+    if (!targetUrl) {
+      return res.status(400).send('URL parameter is required');
+    }
 
-      // Existing location header modification
-      if (proxyRes.headers["location"]) {
-        const newLocation = proxyRes.headers["location"].replace(
-          sharepointUrl,
-          `http://localhost:${PORT}/proxy`
-        );
-        proxyRes.headers["location"] = newLocation;
-      }
-    },
-  })
+    // Create proxy middleware dynamically based on the target URL
+    const proxy = createProxyMiddleware({
+      target: targetUrl,
+      changeOrigin: true,
+      onProxyReq: (proxyReq, req, res) => {
+        // Add headers necessary for iframe compatibility
+        proxyReq.setHeader("X-Frame-Options", "ALLOW-FROM *");
+        proxyReq.setHeader("Content-Security-Policy", "frame-ancestors 'self' *");
+      },
+      onProxyRes: (proxyRes, req, res) => {
+        // Add headers to allow iframe embedding
+        proxyRes.headers["X-Frame-Options"] = "ALLOW-FROM *";
+        proxyRes.headers["Content-Security-Policy"] = "frame-ancestors 'self' *";
+
+        // Modify location headers if present
+        if (proxyRes.headers["location"]) {
+          const newLocation = proxyRes.headers["location"].replace(
+            targetUrl,
+            `http://localhost:${PORT}/proxy?url=${encodeURIComponent(targetUrl)}`
+          );
+          proxyRes.headers["location"] = newLocation;
+        }
+      },
+    });
+
+    // Call the proxy middleware
+    proxy(req, res, next);
+  }
 );
 
 // Add a general middleware to set headers for all routes
