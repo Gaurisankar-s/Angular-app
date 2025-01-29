@@ -58,6 +58,7 @@ export class PolicyFormComponent implements OnInit {
           console.log('Policy created successfully:', response);
           this.policyForm.reset();
           alert('Policy created successfully!');
+          window.open('https://www.office.com/launch/Word?ui=en-US', '_blank');
           window.location.reload();
         },
         error: (error) => {
@@ -100,9 +101,5 @@ export class PolicyFormComponent implements OnInit {
       }
     });
     return errors;
-  }
-
-  addToWord(): void {
-    window.open('https://www.office.com/launch/Word?ui=en-US', '_blank');
   }
 }
