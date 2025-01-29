@@ -110,23 +110,6 @@ router.patch('/policy/:policyId', async (req, res) => {
   }
 });
 
-// Update policy by policyId
-router.put('/policy/:policyId', async (req, res) => {
-  try {
-    const updatedPolicy = await Policy.findOneAndUpdate(
-      { policyId: req.params.policyId },
-      req.body,
-      { new: true, runValidators: true }
-    );
-    if (!updatedPolicy) {
-      return res.status(404).json({ message: 'Policy not found' });
-    }
-    res.json(updatedPolicy);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
 // Delete policy by policyId
 router.delete('/policy/:policyId', async (req, res) => {
   try {
