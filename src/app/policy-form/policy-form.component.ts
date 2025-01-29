@@ -58,6 +58,7 @@ export class PolicyFormComponent implements OnInit {
           console.log('Policy created successfully:', response);
           this.policyForm.reset();
           alert('Policy created successfully!');
+          window.location.reload();
         },
         error: (error) => {
           console.error('Error creating policy:', error);
