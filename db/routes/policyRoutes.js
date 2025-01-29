@@ -81,6 +81,19 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// Delete policy
+router.delete('/:id', async (req, res) => {
+  try {
+    const policy = await Policy.findByIdAndDelete(req.params.id);
+    if (!policy) {
+      return res.status(404).json({ message: 'Policy not found' });
+    }
+    res.json({ message: 'Policy deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.patch('/policy/:policyId', async (req, res) => {
   try {
     const updatedPolicy = await Policy.findOneAndUpdate(
@@ -96,20 +109,6 @@ router.patch('/policy/:policyId', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-
-// Delete policy
-router.delete('/:id', async (req, res) => {
-  try {
-    const policy = await Policy.findByIdAndDelete(req.params.id);
-    if (!policy) {
-      return res.status(404).json({ message: 'Policy not found' });
-    }
-    res.json({ message: 'Policy deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 
 // Update policy by policyId
 router.put('/policy/:policyId', async (req, res) => {
