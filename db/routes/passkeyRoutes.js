@@ -49,13 +49,15 @@ router.post('/verify', async (req, res) => {
     
     // Update the document with the JWT
     passkeyDoc.jwt = token;
+    passkeyDoc.passkey = null;   //Removing passkey from the database after verification
     await passkeyDoc.save();
+
+    // Delete the passkey document after verification
     
-    res.status(200).json({ valid: true, message: 'Passkey verified successfully' , token: token});
+    res.status(200).json({ valid: true, message: 'Passkey verified successfully', token: token });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-  
 });
 
 // Update JWT after successful passkey verification
