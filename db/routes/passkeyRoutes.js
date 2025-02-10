@@ -41,10 +41,11 @@ router.post('/verify', async (req, res) => {
     // Optionally delete the passkey after successful verification
     await Passkey.deleteOne({ _id: passkeyDoc._id });
     
-    res.json({ valid: true, message: 'Passkey verified successfully' });
+    res.status(200).json({ valid: true, message: 'Passkey verified successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+
 });
 
 module.exports = router; 
