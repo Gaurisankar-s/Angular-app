@@ -51,7 +51,7 @@ router.post('/verify', async (req, res) => {
     passkeyDoc.jwt = token;
     await passkeyDoc.save();
     
-    res.status(200).json({ valid: true, message: 'Passkey verified successfully' });
+    res.status(200).json({ valid: true, message: 'Passkey verified successfully' , token: token});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
