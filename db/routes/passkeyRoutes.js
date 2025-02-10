@@ -28,12 +28,14 @@ router.post('/', async (req, res) => {
 
 // Verify a passkey
 router.post('/verify', async (req, res) => {
-  // This route handles POST requests to /api/passkeys/verify
-  // It checks if a passkey is valid for a given email
-  // Example call: POST http://localhost:3001/api/passkeys/verify
-  // with body: { "email": "user@example.com", "passkey": "abc123" }
   try {
     const { email, passkey } = req.body;
+
+    // Check if both email and passkey are provided
+    if (!email || !passkey) {
+      return res.status(400).json({ message: 'Email and passkey are required' });
+    }
+
     const passkeyDoc = await Passkey.findOne({ email, passkey });
     
     if (!passkeyDoc) {
@@ -47,13 +49,11 @@ router.post('/verify', async (req, res) => {
       { expiresIn: '1h' }
     );
     
-    // Update the document with the JWT
+    // Set passkey to an empty string and update the document with the JWT
+    passkeyDoc.passkey = "";
     passkeyDoc.jwt = token;
-    passkeyDoc.passkey = null;   //Removing passkey from the database after verification
     await passkeyDoc.save();
 
-    // Delete the passkey document after verification
-    
     res.status(200).json({ valid: true, message: 'Passkey verified successfully', token: token });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -63,11 +63,11 @@ router.post('/verify', async (req, res) => {
 // Update JWT after successful passkey verification
 router.post('/update-jwt', async (req, res) => {
   try {
-    const { email } = req.body;
-    const passkeyDoc = await Passkey.findOne({ email });
+    const { email, passkey } = req.body;
+    const passkeyDoc = await Passkey.findOne({ email, passkey });
     
     if (!passkeyDoc) {
-      return res.status(401).json({ message: 'Invalid email' });
+      return res.status(401).json({ message: 'Invalid passkey or email' });
     }
 
     // Generate JWT
