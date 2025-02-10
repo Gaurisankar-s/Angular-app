@@ -61,11 +61,11 @@ router.post('/verify', async (req, res) => {
 // Update JWT after successful passkey verification
 router.post('/update-jwt', async (req, res) => {
   try {
-    const { email, passkey } = req.body;
-    const passkeyDoc = await Passkey.findOne({ email, passkey });
+    const { email } = req.body;
+    const passkeyDoc = await Passkey.findOne({ email });
     
     if (!passkeyDoc) {
-      return res.status(401).json({ message: 'Invalid passkey or email' });
+      return res.status(401).json({ message: 'Invalid email' });
     }
 
     // Generate JWT
