@@ -12,6 +12,10 @@ const PasskeySchema = new Schema({
     type: String, 
     required: true 
   },
+  jwt: {
+    type: String,
+    default: null
+  },
   createdAt: { 
     type: Date, 
     default: Date.now,

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Passkey = require('../models/passkeySchema');
+const jwt = require('jsonwebtoken'); // Make sure to npm install jsonwebtoken
+const crypto = require('crypto'); // Add this line to import the crypto module
 
 // Store a new passkey
 router.post('/', async (req, res) => {
@@ -38,14 +40,69 @@ router.post('/verify', async (req, res) => {
       return res.status(401).json({ valid: false, message: 'Invalid or expired passkey' });
     }
     
-    // Optionally delete the passkey after successful verification
-    await Passkey.deleteOne({ _id: passkeyDoc._id });
+    // Generate JWT
+    const token = jwt.sign(
+      { email: passkeyDoc.email },
+      crypto.randomBytes(32).toString('hex'), // Generate a random secret
+      { expiresIn: '1h' }
+    );
+    
+    // Update the document with the JWT
+    passkeyDoc.jwt = token;
+    await passkeyDoc.save();
     
     res.status(200).json({ valid: true, message: 'Passkey verified successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+  
+});
 
+// Update JWT after successful passkey verification
+router.post('/update-jwt', async (req, res) => {
+  try {
+    const { email, passkey } = req.body;
+    const passkeyDoc = await Passkey.findOne({ email, passkey });
+    
+    if (!passkeyDoc) {
+      return res.status(401).json({ message: 'Invalid passkey or email' });
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { email: passkeyDoc.email },
+      crypto.randomBytes(32).toString('hex'), // Generate a random secret
+      { expiresIn: '1h' }
+    );
+
+    // Update the document with the JWT
+    passkeyDoc.jwt = token;
+    await passkeyDoc.save();
+
+    res.status(200).json({ token });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Kill JWT token
+router.post('/kill-jwt', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const passkeyDoc = await Passkey.findOne({ email });
+    
+    if (!passkeyDoc) {
+      return res.status(404).json({ message: 'No active session found' });
+    }
+
+    // Clear the JWT
+    passkeyDoc.jwt = null;
+    await passkeyDoc.save();
+
+    res.status(200).json({ message: 'JWT token successfully cleared' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 module.exports = router; 

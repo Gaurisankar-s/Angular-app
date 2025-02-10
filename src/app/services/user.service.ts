@@ -31,6 +31,18 @@ export class UserService {
     );
   }
 
+  updateJWT(email: string, passkey: string): Observable<any> {
+    return this.http.post(`${this.passkeyUrl}/update-jwt`, { email, passkey }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  killJWT(email: string): Observable<any> {
+    return this.http.post(`${this.passkeyUrl}/kill-jwt`, { email }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error('An error occurred:', error);
     if (error.error instanceof ErrorEvent) {
