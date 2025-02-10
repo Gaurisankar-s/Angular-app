@@ -39,10 +39,10 @@ import { PolicyService } from '../services/policy.service';
           <iframe
             [src]="getProxiedUrl(selectedPolicy.readLink)"
             width="100%"
-            height="600"
+            height="1000"
             frameborder="0"
-            scrolling="yes"
-            allowfullscreen>
+            scrolling="no"
+            >
           </iframe>
         </div>
         <ng-template #noDocument>

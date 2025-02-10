@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const policyRoutes = require('./routes/policyRoutes');
 const userRoutes = require('./routes/userRoutes');
+const passkeyRoutes = require('./routes/passkeyRoutes');
 
 const app = express();
 
@@ -29,7 +30,23 @@ mongoose.connect(MONGODB_URI)
 
 // Routes
 app.use('/api/policies', policyRoutes);
+// Handles all policy-related operations like:
+// - Creating new policies
+// - Getting policy lists
+// - Updating policies
+// - Deleting policies
+
 app.use('/api/users', userRoutes);
+// Handles all user-related operations like:
+// - Creating new users
+// - Getting user information
+// - Updating user details
+// - Checking user email exists
+
+app.use('/api/passkeys', passkeyRoutes);
+// Handles passkey operations:
+// - Storing temporary passkeys
+// - Verifying passkeys
 
 // Error handling middleware
 app.use((err, req, res, next) => {

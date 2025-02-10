@@ -1,18 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, throwError, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private apiUrl = 'http://localhost:3001/api/users';
+  private passkeyUrl = 'http://localhost:3001/api/passkeys';
 
   constructor(private http: HttpClient) { }
 
   createUser(userData: any): Observable<any> {
     console.log('Sending user data:', userData);
     return this.http.post(this.apiUrl, userData).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  checkUserEmail(email: string): Observable<boolean> {
+    return this.http.get<any[]>(`${this.apiUrl}?email=${email}`).pipe(
+      map(users => users.length > 0),
+      catchError(this.handleError)
+    );
+  }
+
+  storePasskey(email: string, passkey: string): Observable<any> {
+    return this.http.post(this.passkeyUrl, { email, passkey }).pipe(
       catchError(this.handleError)
     );
   }
