@@ -107,4 +107,29 @@ router.post('/kill-jwt', async (req, res) => {
   }
 });
 
+// Check session
+router.post('/validate-session', async (req, res) => {
+  try {
+    const { email, jwt } = req.body;
+
+    if (!email || !jwt) {
+      return res.status(400).json({ message: 'Email and jwt are required' });
+    }
+
+    const passkeyDoc = await Passkey.findOne({ email });
+
+    if (!passkeyDoc) {
+      return res.status(404).json({ valid: false, message: 'Email not found' });
+    }
+
+    if (passkeyDoc.jwt === jwt) {
+      return res.status(200).json({ valid: true });
+    } else {
+      return res.status(200).json({ valid: false });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router; 
