@@ -3,6 +3,8 @@ import { PolicyFormComponent } from '../policy-form/policy-form.component';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { PolicyListComponent } from '../policy-list/policy-list.component';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../services/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main',
@@ -34,6 +36,7 @@ import { CommonModule } from '@angular/common';
       <div class="policy-list-container">
         <app-policy-list></app-policy-list>
       </div>
+      <button class="logout-btn" (click)="logout()">Logout</button>
     </main>
   `,
   styles: [`
@@ -160,11 +163,35 @@ import { CommonModule } from '@angular/common';
         padding: 1rem 0.75rem;
       }
     }
+
+    .logout-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: #dc2626;
+      transform: translateY(-1px);
+    }
   `]
 })
 export class MainComponent {
   showUserForm = false;
   showPolicyForm = false;
+
+  constructor(
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   toggleUserForm() {
     this.showUserForm = !this.showUserForm;
@@ -172,5 +199,18 @@ export class MainComponent {
 
   togglePolicyForm() {
     this.showPolicyForm = !this.showPolicyForm;
+  }
+
+  logout() {
+    this.userService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Error during logout:', error);
+        // Even if there's an error, we'll redirect to login
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }
