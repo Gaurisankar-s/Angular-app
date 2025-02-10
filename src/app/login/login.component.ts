@@ -14,6 +14,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   readonly DEMO_PASSWORD = '123456';
+  generatedPasskey: string = '';
+  showPasskey: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -40,7 +42,7 @@ export class LoginComponent implements OnInit {
 
   private generatePasskey(): string {
     // Generate a random passkey using crypto API
-    const array = new Uint8Array(32); // 256 bits
+    const array = new Uint8Array(4); // 32 bits (4 bytes) for 8 hex characters
     crypto.getRandomValues(array);
     return Array.from(array)
       .map(b => b.toString(16).padStart(2, '0'))
@@ -60,13 +62,16 @@ export class LoginComponent implements OnInit {
         next: (exists) => {
           if (exists) {
             const passkey = this.generatePasskey();
-            // Store the passkey in MongoDB
             this.userService.storePasskey(email, passkey).subscribe({
               next: (response) => {
                 console.log('Passkey stored successfully:', response);
-                console.log('Generated Passkey:', passkey);
+                this.generatedPasskey = passkey;
+                this.showPasskey = true;
                 console.log('Login successful');
-                this.router.navigate(['/main']);
+                // Delay navigation to allow user to copy passkey
+                setTimeout(() => {
+                  this.router.navigate(['/main']);
+                }, 10000); // 10 seconds delay
               },
               error: (error) => {
                 console.error('Error storing passkey:', error);
@@ -85,6 +90,15 @@ export class LoginComponent implements OnInit {
       });
     } else {
       alert('Please fill in all required fields correctly.');
+    }
+  }
+
+  async copyPasskey(passkeyInput: HTMLInputElement) {
+    try {
+      await navigator.clipboard.writeText(this.generatedPasskey);
+      console.log('Passkey copied to clipboard');
+    } catch (err) {
+      console.error('Failed to copy passkey:', err);
     }
   }
 } 
