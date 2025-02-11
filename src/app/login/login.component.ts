@@ -68,6 +68,8 @@ export class LoginComponent implements OnInit {
                 this.generatedPasskey = passkey;
                 this.showPasskey = true;
                 console.log('Login successful');
+                // Store email in localStorage
+                localStorage.setItem('userEmail', email);
                 // Delay navigation to allow user to copy passkey
                 setTimeout(() => {
                   this.router.navigate(['/main']);

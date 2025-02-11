@@ -10,7 +10,8 @@ const PasskeySchema = new Schema({
   },
   passkey: { 
     type: String, 
-    required: true 
+    required: false, // Make passkey optional
+    default: null
   },
   jwt: {
     type: String,

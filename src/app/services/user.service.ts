@@ -43,6 +43,20 @@ export class UserService {
     );
   }
 
+  logout(): Observable<any> {
+    const email = localStorage.getItem('userEmail');
+    if (!email) {
+      return throwError(() => 'No user email found');
+    }
+    
+    return this.killJWT(email).pipe(
+      map(response => {
+        localStorage.removeItem('userEmail');
+        return response;
+      })
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error('An error occurred:', error);
     if (error.error instanceof ErrorEvent) {
